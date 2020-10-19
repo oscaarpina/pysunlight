@@ -21,7 +21,7 @@ TEST_BUILDING_DESCRIPTION = {
 class BuildingTest(unittest.TestCase):
 	def setUp(self):
 		self.building = Building(TEST_BUILDING_NAME, TEST_BUILDING_APARTMENTS_COUNT, \
-			TEST_BUILDING_DISTANCE, TEST_BUILDING_NUMBER, TEST_APARTMENTS_HEIGHT)
+			TEST_BUILDING_DISTANCE, TEST_APARTMENTS_HEIGHT)
 
 	def test_get_name(self):
 		self.assertEqual(TEST_BUILDING_DESCRIPTION["name"], self.building.get_name())

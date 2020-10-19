@@ -14,15 +14,21 @@ TEST_NEIGHBORHOOD_APARTMENTS_HEIGHT = 4
 # To test get_eastern/westen_buildings, dif returned values for get_number(). Instead of mocking
 # the class Building I'm creating a simplest version
 class MockBuilding:
-	def __init__(self, name, number):
+	def __init__(self, name, distance):
 		self.name = name
-		self.number = number
+		self.distance = distance
 
 	def get_name(self):
 		return self.name
 
 	def get_number(self):
 		return self.number
+
+	def set_number(self, number):
+		self.number = number
+
+	def get_distance(self):
+		return self.distance
 
 class NeighborhoodTest(unittest.TestCase):
 
@@ -33,6 +39,11 @@ class NeighborhoodTest(unittest.TestCase):
 	def test_get_name(self):
 		self.assertEqual(TEST_NEIGHBORHOOD_NAME, 
 			self.neighborhood.get_name())
+
+	def test_parse_buildings(self):
+		bs = [MockBuilding("b1", 7), MockBuilding("b2", 16), MockBuilding("b3", 1), MockBuilding("b4", 12)]
+		bs, _ = self.neighborhood.parse_buildings(bs)
+		self.assertEqual(["b3","b1","b4","b2"], [b.get_name() for b in bs])
 
 	def test_is_in_neighborhood_ok(self):
 		self.assertEqual(True, self.neighborhood.is_in_neighborhood(0))

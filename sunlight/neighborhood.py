@@ -24,14 +24,27 @@ class Neighborhood:
 		self.__name = name
 		self.__apartments_height = apartments_height
 
-		self.__buildings = buildings
-		self.__buildings_numbers = dict()
-		for b in buildings:
-			self.__buildings_numbers[b.get_name()] = b.get_number()
-
+		self.__buildings, self.__buildings_numbers = self.parse_buildings(buildings)
 
 	def get_name(self):
 		return self.__name
+
+	def parse_buildings(self, buildings):
+
+		# create a dict (building distance -> building list position)
+		d = dict([ (b.get_distance(), i) for i,b in enumerate(buildings)])
+		# order by distance (keys)
+		dist_ls = list(d.keys())
+		dist_ls.sort()
+		# create list ordered by distance
+		buildings = [ buildings[ d[dist] ] for dist in dist_ls]
+
+		# set number of buildings and create (building name -> building number) dict
+		buildings_numbers = dict()
+		for i in range(len(buildings)):
+			buildings[i].set_number(i)
+			buildings_numbers[buildings[i].get_name()] = buildings[i].get_number()
+		return buildings, buildings_numbers
 
 	@classmethod
 	def is_description_correct(cls, desc):

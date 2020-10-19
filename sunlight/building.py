@@ -8,28 +8,13 @@ class Building:
 	B_NAME_KEY = "name"
 	B_APARTMENTS_COUNT_KEY = "apartments_count"
 	B_DISTANCE_KEY = "distance"
-	"""
-	def __init__(self, desc, number, apartments_height):
-		self.__name = desc[self.B_NAME_KEY]
-		self.__apartments_count = desc[self.B_APARTMENTS_COUNT_KEY]
-		self.__distance = desc[self.B_DISTANCE_KEY]
 
-		self.__number = number
-		self.__apartments_height = apartments_height
-
-		self.__apartments = list()
-		for i in range(self.__apartments_count):
-			apartment = Apartment(self, i)
-			self.__apartments.append(apartment)
-
-		self.__shadow = Shadow(self)
-	"""
-	def __init__(self, name, apartments_count, distance, number, apartments_height):
+	def __init__(self, name, apartments_count, distance, apartments_height):
 		self.__name = name
 		self.__apartments_count = apartments_count
 		self.__distance = distance
-		self.__number = number
 		self.__apartments_height = apartments_height
+		self.__number = None
 
 		self.__apartments = list()
 		for i in range(self.__apartments_count):
@@ -44,6 +29,9 @@ class Building:
 
 	def get_number(self):
 		return self.__number
+
+	def set_number(self, number):
+		self.__number = number
 
 	def get_distance(self):
 		return self.__distance

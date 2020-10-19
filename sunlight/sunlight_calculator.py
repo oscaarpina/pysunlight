@@ -5,25 +5,27 @@ import math
 import time
 import json
 
-DEFAULT_RAISE_TIME  = "08:14"
+DEFAULT_rise_time  = "08:14"
 DEFAULT_SETTING_TIME = "17:25"
 class SunlightCalculator:
 
+	# initialization, in can take rise and setting times. If they are not specified, take the default.
 	def __init__(self, **kwargs):
 		self.city = None
 
-		raise_time   = time.strptime(DEFAULT_RAISE_TIME if "raise_time" not in kwargs else kwargs["raise_time"], "%H:%M")
-		self.__raise_time = raise_time.tm_sec + 60*raise_time.tm_min + 3600*raise_time.tm_hour
+		rise_time   = time.strptime(DEFAULT_rise_time if "rise_time" not in kwargs else kwargs["rise_time"], "%H:%M")
+		self.__rise_time = rise_time.tm_sec + 60*rise_time.tm_min + 3600*rise_time.tm_hour
 
 		setting_time = time.strptime(DEFAULT_SETTING_TIME if "setting_time" not in kwargs else kwargs["setting_time"], "%H:%M")
 		self.__setting_time = setting_time.tm_sec + 60*setting_time.tm_min + 3600*setting_time.tm_hour
 
-		assert setting_time > raise_time, "Setting time must be larger than raise time."
+		assert setting_time > rise_time, "Setting time must be larger than raise time."
 		
-		self.__w = math.pi/(self.__setting_time - self.__raise_time)
+		# compute the velocity (rad / s)
+		self.__w = math.pi/(self.__setting_time - self.__rise_time)
 
-	def get_raise_time(self):
-		return self.__raise_time
+	def get_rise_time(self):
+		return self.__rise_time
 
 	def get_setting_time(self):
 		return self.__setting_time
@@ -41,16 +43,15 @@ class SunlightCalculator:
 			neighborhoods_list.append(self.create_neighborhood(n))
 		self.city = City(neighborhoods_list)
 
-	def create_building(self, n, b, num):
+	def create_building(self, n, b):
 		Building.is_description_correct(b)
-		return Building(b[Building.B_NAME_KEY], b[Building.B_APARTMENTS_COUNT_KEY], b[Building.B_DISTANCE_KEY], \
-					num, n[Neighborhood.N_APARTMENTS_HEIGHT_KEY])
+		return Building(b[Building.B_NAME_KEY], b[Building.B_APARTMENTS_COUNT_KEY], b[Building.B_DISTANCE_KEY],n[Neighborhood.N_APARTMENTS_HEIGHT_KEY])
 
 	def create_neighborhood(self, n):
 		Neighborhood.is_description_correct(n)
 		buildings_list = list()
-		for idx, b in enumerate(n[Neighborhood.N_BUILDINGS_KEY]):
-			buildings_list.append(self.create_building(n, b, idx))
+		for b in n[Neighborhood.N_BUILDINGS_KEY]:
+			buildings_list.append(self.create_building(n, b))
 		return Neighborhood(n[Neighborhood.N_NAME_KEY], n[Neighborhood.N_APARTMENTS_HEIGHT_KEY], buildings_list)
 
 	def get_sunlight_angles(self, neighborhood_name, building_name, apartment_number):
@@ -88,5 +89,5 @@ class SunlightCalculator:
 
 	def get_sunlight_hours(self, neighborhood_name, building_name, apartment_number):
 		init_angle, end_angle = self.get_sunlight_angles(neighborhood_name, building_name, int(apartment_number))
-		return "{}-{}".format( self.time2str(self.angle2time(init_angle)+self.get_raise_time()), \
-			self.time2str(self.angle2time(end_angle)+self.get_raise_time()) )
+		return "{}-{}".format( self.time2str(self.angle2time(init_angle)+self.get_rise_time()), \
+			self.time2str(self.angle2time(end_angle)+self.get_rise_time()) )
